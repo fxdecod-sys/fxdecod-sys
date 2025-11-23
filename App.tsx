@@ -9,8 +9,10 @@ import { LevelsSection } from './components/LevelsSection';
 import { TradingViewWidget } from './components/TradingViewWidget';
 import { ForexHeatmap } from './components/ForexHeatmap';
 import { GoldTechnical } from './components/GoldTechnical';
+import { EconomicCalendar } from './components/EconomicCalendar';
 import { TickerTape } from './components/TickerTape';
 import { Footer } from './components/Footer';
+import { Logo } from './components/Logo';
 import { Search, Info, Globe, SlidersHorizontal, BarChart2 } from 'lucide-react';
 
 const COMMON_PAIRS = ['XAUUSD', 'EURUSD', 'GBPUSD', 'USDJPY', 'BTCUSD', 'ETHUSD', 'US30'];
@@ -50,23 +52,10 @@ function App() {
       {/* Navbar */}
       <nav className="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 backdrop-blur-md bg-opacity-80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20"> {/* Increased height slightly for logo */}
+          <div className="flex items-center justify-between h-20">
             {/* Logo Section - Right Side in RTL */}
             <div className="flex items-center shrink-0">
-              <img 
-                src="/logo.png" 
-                alt="FX DECOD" 
-                className="h-16 w-auto object-contain drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                  // Fallback if image fails
-                  const fallback = document.getElementById('logo-fallback');
-                  if(fallback) fallback.classList.remove('hidden');
-                }}
-              />
-              <div id="logo-fallback" className="hidden text-xl font-bold text-white tracking-widest border-2 border-white/20 p-2 rounded">
-                FX DECOD
-              </div>
+               <Logo className="h-10 w-auto" />
             </div>
 
             {/* Status Badge - Left Side in RTL */}
@@ -187,6 +176,9 @@ function App() {
                 <GoldTechnical />
                 <ForexHeatmap />
              </div>
+
+             {/* Economic Calendar */}
+             <EconomicCalendar />
           </div>
         )}
 
