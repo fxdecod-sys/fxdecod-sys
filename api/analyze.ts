@@ -1,49 +1,40 @@
-// /api/analyze.ts
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { AnalysisRequest, AnalysisResponse, ActionType } from "../types";
-import { TextGenerationClient } from "@google/generative-ai";
+import { TextServiceClient } from "@google/generative-ai";
 
-// Helper: Parse JSON from ENV variable
-function getServiceAccount() {
-  const raw = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-  if (!raw) throw new Error("Missing GOOGLE_APPLICATION_CREDENTIALS environment variable");
-  try {
-    return JSON.parse(raw);
-  } catch (err) {
-    throw new Error("Invalid JSON in GOOGLE_APPLICATION_CREDENTIALS");
-  }
-}
+let aiClient: TextServiceClient | null = null;
 
-// Initialize AI Client (singleton)
-let aiClient: TextGenerationClient | null = null;
-function getAIClient() {
+function getClient(): TextServiceClient {
   if (!aiClient) {
-    const serviceAccount = getServiceAccount();
-    aiClient = new TextGenerationClient({
-      authClient: {
-        email: serviceAccount.client_email,
-        key: serviceAccount.private_key,
-      },
-    });
-    console.log("AI client initialized successfully.");
+    try {
+      aiClient = new TextServiceClient({
+        keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+      });
+    } catch (err: any) {
+      console.error("Failed to initialize AI client:", err.message || err);
+      throw new Error("Initialization failed: " + (err.message || err));
+    }
   }
   return aiClient;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({ error: "Method not allowed. Only POST requests are accepted." });
+  }
+
+  const body: AnalysisRequest = req.body || {};
+  const pair = body.pair || "EURUSD";
+
+  let client: TextServiceClient;
+  try {
+    client = getClient();
+  } catch (err: any) {
+    return res.status(500).json({ error: "AI client initialization error: " + err.message });
   }
 
   try {
-    const body: AnalysisRequest = req.body || {};
-    const pair = body.pair || "EURUSD";
-
-    const client = getAIClient();
-
-    // Example: You can replace this with real Gemini AI call
-    // const response = await client.generateText({...});
-    // For now, return deterministic mock response
+    // مثال: مجرد mock response للتجربة
     const mock: AnalysisResponse = {
       pair,
       currentPrice: 1.12345,
@@ -65,8 +56,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     };
 
     return res.status(200).json(mock);
+
+    // لاحقًا تقدر تحل الـ mock وتستبدلها باستدعاء حقيقي لـ Google API:
+    // const response = await client.generateText({ model: "models/text-bison-001", prompt: "..." });
   } catch (err: any) {
-    console.error("API error:", err);
-    return res.status(500).json({ error: String(err) });
+    console.error("AI request error:", err.message || err);
+    return res.status(500).json({ error: "AI request failed: " + (err.message || err) });
   }
 }
