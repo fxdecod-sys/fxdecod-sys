@@ -3,433 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FXDecod - نظام تحليل الأسواق المالية</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: #0f1a2b;
-            color: #ffffff;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        /* الهيدر */
-        .header {
-            background: linear-gradient(135deg, #1e3a5c, #0f1a2b);
-            padding: 15px 0;
-            border-bottom: 2px solid #2d4a6d;
-        }
-        
-        .market-ticker {
-            background: #1a2b44;
-            padding: 10px 0;
-            border-bottom: 1px solid #2d4a6d;
-        }
-        
-        .ticker-content {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        
-        .ticker-item {
-            display: flex;
-            align-items: center;
-            margin: 0 15px;
-        }
-        
-        .price-up {
-            color: #00ff88;
-        }
-        
-        .price-down {
-            color: #ff4444;
-        }
-        
-        /* الشبكة الرئيسية */
-        .dashboard {
-            display: grid;
-            grid-template-columns: 300px 1fr 300px;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        /* الأعمدة الجانبية */
-        .sidebar {
-            background: #1a2b44;
-            border-radius: 10px;
-            padding: 20px;
-            border: 1px solid #2d4a6d;
-        }
-        
-        .main-content {
-            background: #1a2b44;
-            border-radius: 10px;
-            padding: 20px;
-            border: 1px solid #2d4a6d;
-        }
-        
-        /* البطاقات */
-        .card {
-            background: #22334d;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid #2d4a6d;
-        }
-        
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #2d4a6d;
-        }
-        
-        .card-title {
-            color: #64b5f6;
-            font-weight: bold;
-        }
-        
-        /* القوائم */
-        .list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #2d4a6d;
-        }
-        
-        .list-item:last-child {
-            border-bottom: none;
-        }
-        
-        /* الأزرار */
-        .btn {
-            background: linear-gradient(135deg, #2196F3, #1976D2);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn:hover {
-            background: linear-gradient(135deg, #1976D2, #1565C0);
-            transform: translateY(-1px);
-        }
-        
-        /* التحليل الفني */
-        .analysis-section {
-            background: #22334d;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            border: 1px solid #2d4a6d;
-        }
-        
-        .time-frames {
-            display: flex;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .time-frame {
-            background: #1a2b44;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            border: 1px solid #2d4a6d;
-            transition: all 0.3s ease;
-        }
-        
-        .time-frame.active {
-            background: #2196F3;
-            border-color: #64b5f6;
-        }
-        
-        /* الخريطة الحرارية */
-        .heatmap {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .currency-pair {
-            background: #1a2b44;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            border: 1px solid #2d4a6d;
-        }
-        
-        /* التذييل */
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            color: #64b5f6;
-            border-top: 1px solid #2d4a6d;
-        }
-        
-        /* التجاوب */
-        @media (max-width: 1024px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <title>FX DECOD - نظام التحليل المالي بالذكاء الاصطناعي</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- أيقونات Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- شريط العناوين -->
-    <div class="header">
-        <div class="container">
-            <h1 style="text-align: center; color: #64b5f6;">FXDecod</h1>
+    <!-- الهيدر -->
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <!-- الشعار الجديد حسب الهوية البصرية -->
+                <div class="logo-container">
+                    <h1 class="logo-new">
+                        <span class="logo-fx">FX</span>
+                        <span class="logo-decod">Decod</span>
+                    </h1>
+                </div>
+                <div class="ai-status">
+                    <span class="status-dot"></span>
+                    <span>AI Connected</span>
+                </div>
+            </div>
         </div>
-    </div>
-    
-    <!-- شريط الأسعار -->
-    <div class="market-ticker">
-        <div class="container">
-            <div class="ticker-content">
-                <div class="ticker-item">
-                    <strong>الذهب:</strong>
-                    <span class="price-up">4,163.30 +0.52%</span>
-                </div>
-                <div class="ticker-item">
-                    <strong>الدولار الأمريكي:</strong>
-                    <span class="price-down">104.25 -0.12%</span>
-                </div>
-                <div class="ticker-item">
-                    <strong>S&P 500:</strong>
-                    <span class="price-up">6,817.8 +2.10</span>
-                </div>
-                <div class="ticker-item">
-                    <strong>US 100:</strong>
-                    <span class="price-up">25,255.9 +6.40</span>
-                </div>
+    </header>
+
+    <!-- شريط الأسعار المتحرك -->
+    <div class="ticker-tape">
+        <div class="ticker-content">
+            <div class="ticker-item">
+                <span>الذهب:</span>
+                <span class="price-up">4,163.30 +0.52%</span>
+            </div>
+            <div class="ticker-item">
+                <span>EUR/USD:</span>
+                <span class="price-down">1.0850 -0.12%</span>
+            </div>
+            <div class="ticker-item">
+                <span>Bitcoin:</span>
+                <span class="price-up">67,420 +1.25%</span>
+            </div>
+            <div class="ticker-item">
+                <span>DXY:</span>
+                <span class="price-down">104.15 -0.08%</span>
             </div>
         </div>
     </div>
 
-    <!-- الشبكة الرئيسية -->
-    <div class="container">
-        <div class="dashboard">
-            
-            <!-- العمود الأيسر -->
-            <div class="sidebar">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">اتخاذ التحليل</h3>
-                    </div>
-                    <div class="list-item">
-                        <span>التحليل الثلاثي</span>
-                    </div>
-                    <div class="list-item">
-                        <span>التعليم الثلاثي</span>
-                    </div>
-                    <div class="list-item">
-                        <span>التعليم الثلاثي</span>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">إيجاد التحليل الذكي</h3>
-                    </div>
-                    <div class="list-item">
-                        <span>(Conservative) Enibro</span>
-                    </div>
-                    <div class="list-item">
-                        <span>Intraday (H1-H4)</span>
-                    </div>
-                    <div class="list-item">
-                        <span>XAUUSD</span>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">التوزيع</h3>
-                    </div>
-                    <div style="display: flex; flex-wrap: wrap; gap: 5px;">
-                        <span style="background: #2d4a6d; padding: 5px 10px; border-radius: 3px;">14</span>
-                        <span style="background: #2d4a6d; padding: 5px 10px; border-radius: 3px;">16</span>
-                        <span style="background: #2d4a6d; padding: 5px 10px; border-radius: 3px;">18</span>
-                        <span style="background: #2d4a6d; padding: 5px 10px; border-radius: 3px;">19</span>
-                        <span style="background: #2d4a6d; padding: 5px 10px; border-radius: 3px;">20</span>
-                        <span style="background: #2d4a6d; padding: 5px 10px; border-radius: 3px;">21</span>
-                        <span style="background: #2d4a6d; padding: 5px 10px; border-radius: 3px;">23</span>
-                        <span style="background: #2d4a6d; padding: 5px 10px; border-radius: 3px;">25</span>
-                        <span style="background: #2d4a6d; padding: 5px 10px; border-radius: 3px;">26</span>
-                        <span style="background: #2d4a6d; padding: 5px 10px; border-radius: 3px;">27</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- المحتوى الرئيسي -->
-            <div class="main-content">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">الذهب / الدولار الأمريكي - 1س - OANDA</h3>
-                        <span class="price-up">4,163.625 +3.445 (+0.08%)</span>
-                    </div>
-                    <div class="list-item">
-                        <span>الأعلى:</span>
-                        <span class="price-up">4,164.565</span>
-                    </div>
-                    <div class="list-item">
-                        <span>الأدنى:</span>
-                        <span class="price-down">4,159.565</span>
-                    </div>
-                    <div class="list-item">
-                        <span>الحجم:</span>
-                        <span>11.84K تيك</span>
-                    </div>
-                </div>
-                
-                <!-- التحليل الفني -->
-                <div class="analysis-section">
-                    <h3 style="color: #64b5f6; margin-bottom: 15px;">التحليل الفني لـ XAUUSD</h3>
-                    
-                    <div class="time-frames">
-                        <div class="time-frame active">1 دقيقة</div>
-                        <div class="time-frame">5 دقائق</div>
-                        <div class="time-frame">1 ساعة</div>
-                        <div class="time-frame">المزيد</div>
-                    </div>
-                    
-                    <div style="background: #1a2b44; padding: 15px; border-radius: 5px; margin: 15px 0;">
-                        <h4 style="color: #00ff88; margin-bottom: 10px;">📈 توصية: شراء</h4>
-                        <p><strong>مستويات الدعم:</strong> 4,160.210 - 4,155.000</p>
-                        <p><strong>مستويات المقاومة:</strong> 4,168.000 - 4,172.500</p>
-                        <p><strong>التوقيت:</strong> H1-H4 إطار زمني</p>
-                    </div>
-                </div>
-                
-                <!-- الخريطة الحرارية -->
-                <div class="analysis-section">
-                    <h3 style="color: #64b5f6; margin-bottom: 15px;">(Forest Heatmap) Cultural and global growth</h3>
-                    
-                    <div class="heatmap">
-                        <div class="currency-pair">
-                            <div>EUR</div>
-                            <div class="price-up">0.01%</div>
-                        </div>
-                        <div class="currency-pair">
-                            <div>USD</div>
-                            <div class="price-up">0.02%</div>
-                        </div>
-                        <div class="currency-pair">
-                            <div>JPY</div>
-                            <div class="price-down">-0.13%</div>
-                        </div>
-                        <div class="currency-pair">
-                            <div>GBP</div>
-                            <div class="price-up">0.11%</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- العمود الأيمن -->
-            <div class="sidebar">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">النموذج</h3>
-                    </div>
-                    <div class="list-item">
-                        <span>(Forest Heatmap) Cultural and global growth</span>
-                    </div>
-                    <div class="list-item">
-                        <span>EURO</span>
-                    </div>
-                    <div class="list-item">
-                        <span>USD</span>
-                    </div>
-                    <div class="list-item">
-                        <span>JPY</span>
-                    </div>
-                    <div class="list-item">
-                        <span>GBP</span>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">مقياس خطط السوق</h3>
-                    </div>
-                    <div class="list-item">
-                        <span>(Gold Momentum) Lesal - digital</span>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">TradingView</h3>
-                    </div>
-                    <div style="text-align: center; padding: 20px;">
-                        <button class="btn">فتح TradingView</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- التذييل -->
-    <div class="footer">
+    <!-- لوحة التحكم الرئيسية -->
+    <main class="dashboard">
         <div class="container">
-            <p>FXDecod System &copy; 2024 - نظام متقدم لتحليل الأسواق المالية</p>
-        </div>
-    </div>
+            <!-- لوحة التحكم -->
+            <div class="control-panel">
+                <div class="panel-card">
+                    <h3>⚙️ إعدادات التحليل</h3>
+                    <div class="form-group">
+                        <label>الزوج المالي:</label>
+                        <select id="symbolSelect">
+                            <option value="XAUUSD">الذهب (XAUUSD)</option>
+                            <option value="EURUSD">يورو/دولار (EURUSD)</option>
+                            <option value="GBPUSD">جنيه/دولار (GBPUSD)</option>
+                            <option value="USDJPY">دولار/ين (USDJPY)</option>
+                            <option value="USOIL">النفط (USOIL)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الإطار الزمني:</label>
+                        <select id="timeframeSelect">
+                            <option value="M1">سكالبيج (M1-M5)</option>
+                            <option value="M15">المتاجرة اليومية (M15-H1)</option>
+                            <option value="H4">سوينج (H4-D1)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الاستراتيجية:</label>
+                        <select id="strategySelect">
+                            <option value="conservative">محافظة (Conservative)</option>
+                            <option value="moderate">متوسطة (Moderate)</option>
+                            <option value="aggressive">هجومية (Aggressive)</option>
+                        </select>
+                    </div>
+                    <button class="analyze-btn" onclick="startAnalysis()">
+                        🚀 ابدأ التحليل الذكي
+                    </button>
+                </div>
+            </div>
 
-    <script>
-        // تفعيل أزرار الإطارات الزمنية
-        document.querySelectorAll('.time-frame').forEach(button => {
-            button.addEventListener('click', function() {
-                document.querySelectorAll('.time-frame').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                this.classList.add('active');
-            });
-        });
-        
-        // تحديث البيانات كل 10 ثواني (محاكاة)
-        function updateMarketData() {
-            const prices = document.querySelectorAll('.ticker-item span:last-child');
-            prices.forEach(price => {
-                const randomChange = (Math.random() - 0.5) * 0.2;
-                const currentValue = parseFloat(price.textContent.replace(/[^\d.]/g, ''));
-                const newValue = currentValue * (1 + randomChange / 100);
+            <!-- الشبكة الرئيسية -->
+            <div class="main-grid">
+                <!-- الشارت -->
+                <div class="chart-section">
+                    <div class="section-header">
+                        <h3>📊 الرسم البياني المباشر</h3>
+                        <div class="time-filters">
+                            <button class="time-btn active">1D</button>
+                            <button class="time-btn">1W</button>
+                            <button class="time-btn">1M</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <!-- سيتم تضمين شارت TradingView هنا -->
+                        <div class="chart-placeholder">
+                            <p>📈 شارت TradingView سيعرض هنا</p>
+                            <small>سيتم ربط الشارت الحي عند النشر النهائي</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الأدوات المساعدة -->
+                <div class="widgets-grid">
+                    <!-- مقياس الضغط الفني -->
+                    <div class="widget-card">
+                        <h4>⚡ مقياس ضغط السيولة - الذهب</h4>
+                        <div class="gauge-container">
+                            <div class="gauge">
+                                <div class="gauge-fill" style="width: 75%;"></div>
+                            </div>
+                            <div class="gauge-labels">
+                                <span>بيع قوي</span>
+                                <span class="active">شراء قوي</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- الخريطة الحرارية -->
+                    <div class="widget-card">
+                        <h4>🔥 خريطة قوة العملات</h4>
+                        <div class="heatmap">
+                            <div class="currency-row strong">
+                                <span>USD</span>
+                                <div class="heat-bar" style="width: 85%;"></div>
+                            </div>
+                            <div class="currency-row weak">
+                                <span>JPY</span>
+                                <div class="heat-bar" style="width: 35%;"></div>
+                            </div>
+                            <div class="currency-row medium">
+                                <span>EUR</span>
+                                <div class="heat-bar" style="width: 65%;"></div>
+                            </div>
+                            <div class="currency-row medium">
+                                <span>GBP</span>
+                                <div class="heat-bar" style="width: 60%;"></div>
+                            </div>
+                            <div class="currency-row strong">
+                                <span>CAD</span>
+                                <div class="heat-bar" style="width: 80%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- التقويم الاقتصادي -->
+                    <div class="widget-card">
+                        <h4>📅 التقويم الاقتصادي</h4>
+                        <div class="calendar-events">
+                            <div class="event-item high-impact">
+                                <span>14:30</span>
+                                <span>USD - بيانات التوظيف</span>
+                                <span class="impact-high">عالية</span>
+                            </div>
+                            <div class="event-item medium-impact">
+                                <span>15:00</span>
+                                <span>CAD - معدل البطالة</span>
+                                <span class="impact-medium">متوسطة</span>
+                            </div>
+                            <div class="event-item medium-impact">
+                                <span>16:30</span>
+                                <span>EUR - كلمة رئيس ECB</span>
+                                <span class="impact-medium">متوسطة</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- نتائج التحليل -->
+                <div id="analysisResults" class="analysis-results hidden">
+                    <!-- سيتم ملء هذا القسم بنتائج التحليل -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- التذييل مع روابط التواصل -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo-new footer-logo">
+                        <span class="logo-fx">FX</span>
+                        <span class="logo-decod">Decod</span>
+                    </div>
+                    <p class="footer-tagline">نظام متقدم لتحليل الأسواق المالية بالذكاء الاصطناعي</p>
+                </div>
                 
-                if (randomChange > 0) {
-                    price.className = 'price-up';
-                    price.textContent = newValue.toFixed(2) + ' +' + Math.abs(randomChange).toFixed(2) + '%';
-                } else {
-                    price.className = 'price-down';
-                    price.textContent = newValue.toFixed(2) + ' ' + randomChange.toFixed(2) + '%';
-                }
-            });
-        }
-        
-        // تحديث البيانات كل 10 ثواني
-        setInterval(updateMarketData, 10000);
-    </script>
+                <div class="social-links">
+                    <h4>تابعنا على منصات التواصل</h4>
+                    <div class="social-icons">
+                        <a href="https://t.me/fx_decode" target="_blank" class="social-link telegram">
+                            <i class="fab fa-telegram"></i>
+                            <span>Telegram</span>
+                        </a>
+                        <a href="https://www.youtube.com/@FX.Decodee" target="_blank" class="social-link youtube">
+                            <i class="fab fa-youtube"></i>
+                            <span>YouTube</span>
+                        </a>
+                        <a href="https://www.instagram.com/fx.decodee/" target="_blank" class="social-link instagram">
+                            <i class="fab fa-instagram"></i>
+                            <span>Instagram</span>
+                        </a>
+                        <a href="https://www.tiktok.com/@fx.decodee" target="_blank" class="social-link tiktok">
+                            <i class="fab fa-tiktok"></i>
+                            <span>TikTok</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>FX DECOD System &copy; 2024 - جميع الحقوق محفوظة</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
