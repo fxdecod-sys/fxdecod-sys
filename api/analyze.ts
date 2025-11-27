@@ -1,40 +1,41 @@
-import { NextApiRequest, NextApiResponse } from "next";
+// /api/analyze.ts
+import type { NextApiRequest, NextApiResponse } from "next";
 import { AnalysisRequest, AnalysisResponse, ActionType } from "../types";
 import { TextServiceClient } from "@google/generative-ai";
 
-let aiClient: TextServiceClient | null = null;
+// Helper function to initialize AI client
+function initAiClient() {
+  const saJson = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  if (!saJson) throw new Error("GOOGLE_APPLICATION_CREDENTIALS not found in ENV.");
 
-function getClient(): TextServiceClient {
-  if (!aiClient) {
-    try {
-      aiClient = new TextServiceClient({
-        keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-      });
-    } catch (err: any) {
-      console.error("Failed to initialize AI client:", err.message || err);
-      throw new Error("Initialization failed: " + (err.message || err));
-    }
+  let credentials;
+  try {
+    credentials = JSON.parse(saJson);
+  } catch (err) {
+    throw new Error("GOOGLE_APPLICATION_CREDENTIALS is not valid JSON.");
   }
-  return aiClient;
+
+  return new TextServiceClient({ credentials });
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed. Only POST requests are accepted." });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const body: AnalysisRequest = req.body || {};
-  const pair = body.pair || "EURUSD";
-
-  let client: TextServiceClient;
+  let aiClient: TextServiceClient;
   try {
-    client = getClient();
+    aiClient = initAiClient();
   } catch (err: any) {
-    return res.status(500).json({ error: "AI client initialization error: " + err.message });
+    console.error("AI Client initialization error:", err.message);
+    return res.status(500).json({ error: `AI Client init failed: ${err.message}` });
   }
 
   try {
-    // مثال: مجرد mock response للتجربة
+    const body: AnalysisRequest = req.body || {};
+    const pair = body.pair || "EURUSD";
+
+    // Example: mock response, replace with real call if needed
     const mock: AnalysisResponse = {
       pair,
       currentPrice: 1.12345,
@@ -55,12 +56,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     };
 
+    // هنا ممكن تضيف استدعاء حقيقي للـ aiClient إذا بدك
     return res.status(200).json(mock);
-
-    // لاحقًا تقدر تحل الـ mock وتستبدلها باستدعاء حقيقي لـ Google API:
-    // const response = await client.generateText({ model: "models/text-bison-001", prompt: "..." });
   } catch (err: any) {
-    console.error("AI request error:", err.message || err);
-    return res.status(500).json({ error: "AI request failed: " + (err.message || err) });
+    console.error("API handler error:", err);
+    return res.status(500).json({ error: String(err) });
   }
 }
