@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق الذكاء الاصطناعي</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f0f0f0;
+            padding: 50px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin: 10px 0;
+            padding: 10px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 تطبيق تحليل النصوص</h1>
+        <p>ادخل النص الذي تريد تحليله:</p>
+        
+        <textarea id="textInput" placeholder="اكتب النص هنا..."></textarea>
+        <br>
+        <button onclick="analyzeText()">تحليل النص</button>
+        
+        <div id="result" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px;"></div>
+    </div>
+
+    <script>
+        // دالة التحليل - نسخة مبسطة للتجربة
+        function analyzeText() {
+            const text = document.getElementById('textInput').value;
+            const resultDiv = document.getElementById('result');
+            
+            if (!text) {
+                resultDiv.innerHTML = "<p style='color: red;'>⚠️ الرجاء إدخال نص أولاً</p>";
+                return;
+            }
+            
+            // نتيجة تجريبية مؤقتة
+            resultDiv.innerHTML = `
+                <h3>✅ تم التحليل بنجاح!</h3>
+                <p><strong>النص المدخل:</strong> ${text}</p>
+                <p><strong>التحليل:</strong> هذه نسخة تجريبية. سيتم ربطها بالذكاء الاصطناعي لاحقاً.</p>
+                <p><em>🔧 جاري تطوير النظام...</em></p>
+            `;
+        }
+    </script>
+</body>
+</html>
