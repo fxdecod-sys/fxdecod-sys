@@ -1,29 +1,47 @@
-import { AnalysisRequest, AnalysisResponse } from "../types";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { AnalysisRequest, AnalysisResponse, ActionType } from "../types";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+// --------------------
+// Initialize AI client
+// --------------------
 let aiClient: GoogleGenerativeAI | null = null;
 
-if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-  try {
-    const serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
-    aiClient = new GoogleGenerativeAI({ credentials: serviceAccount });
-  } catch (err) {
-    console.error("Failed to parse GOOGLE_APPLICATION_CREDENTIALS:", err);
-  }
-} else {
-  console.error("GOOGLE_APPLICATION_CREDENTIALS is not set!");
+try {
+  const credentialsStr = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  if (!credentialsStr) throw new Error("GOOGLE_APPLICATION_CREDENTIALS is not set!");
+
+  // Parse the JSON safely
+  const serviceAccount = JSON.parse(credentialsStr);
+
+  aiClient = new GoogleGenerativeAI({
+    credentials: serviceAccount,
+  });
+
+  console.log("AI client initialized successfully.");
+
+} catch (err) {
+  console.error("Failed to initialize AI client:", err);
 }
 
-export default async function handler(req: any, res: any) {
+// --------------------
+// API Handler
+// --------------------
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!aiClient) {
-    return res.status(500).json({ error: "AI client not initialized. Check your Environment Variable." });
+    return res.status(500).json({
+      error: "AI client not initialized. Check GOOGLE_APPLICATION_CREDENTIALS variable and JSON format."
+    });
   }
 
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
   try {
     const requestData: AnalysisRequest = req.body;
 
+    // Example prompt to Gemini 2.5 Flash
     const aiResponse = await aiClient.chat({
       model: "gemini-2.5-flash",
       messages: [
@@ -32,7 +50,10 @@ export default async function handler(req: any, res: any) {
       ],
     });
 
+    // Extract JSON output
     const data: AnalysisResponse = JSON.parse(aiResponse.output_text || "{}");
+
+    // Send response
     res.status(200).json(data);
 
   } catch (error: any) {
