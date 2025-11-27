@@ -1,21 +1,17 @@
+// /api/analyze.ts
 import type { NextApiRequest, NextApiResponse } from "next";
-import { AnalysisRequest, AnalysisResponse, ActionType } from "../types";
-import { GenerativeLanguageClient } from "@google/generative-ai";
 
-// قراءة JSON من المتغير البيئي
-const serviceAccountJSON = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-
-if (!serviceAccountJSON) {
-  throw new Error("GOOGLE_APPLICATION_CREDENTIALS not found in environment variables.");
+interface AnalysisResponse {
+  pair: string;
+  currentPrice: number;
+  action: "BUY" | "SELL" | "NEUTRAL";
+  entry: number;
+  stopLoss: number;
+  takeProfit1: number;
+  takeProfit2: number;
+  takeProfit3: number;
+  confidence: number;
 }
-
-// تحويل JSON لنص حقيقي
-const credentials = JSON.parse(serviceAccountJSON);
-
-// إنشاء العميل
-const aiClient = new GenerativeLanguageClient({
-  auth: credentials
-});
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -23,46 +19,49 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const body: AnalysisRequest = req.body || {};
+    const body = req.body || {};
     const pair = body.pair || "EURUSD";
 
-    // مثال على طلب للـ Gemini API
-    const prompt = `Analyze the Forex pair ${pair} and provide trading levels.`;
-    
-    const response = await aiClient.chat({
-      model: "gemini-1.5",
-      messages: [
-        { role: "user", content: prompt }
-      ]
-    });
+    // جرب الاتصال بموديل Google Generative Language API مباشرة
+    const response = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta2/models/text-bison-001:generate",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.GOOGLE_API_KEY}`,
+        },
+        body: JSON.stringify({
+          prompt: `Provide a trading analysis for ${pair} in JSON format`,
+          maxOutputTokens: 200,
+        }),
+      }
+    );
 
-    const content = response?.candidates?.[0]?.content || "";
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Google API Error:", errorText);
+      return res.status(500).json({ error: `Google API Error: ${errorText}` });
+    }
 
-    // هنا ممكن تحول المحتوى لهيكل AnalysisResponse حقيقي
-    const result: AnalysisResponse = {
+    const data = await response.json();
+
+    // Example response fallback
+    const mock: AnalysisResponse = {
       pair,
       currentPrice: 1.12345,
-      action: ActionType.NEUTRAL,
+      action: "NEUTRAL",
       entry: 1.12345,
-      stopLoss: 1.12000,
-      takeProfit1: 1.12690,
-      takeProfit2: 1.13000,
-      takeProfit3: 1.13500,
+      stopLoss: 1.1200,
+      takeProfit1: 1.1269,
+      takeProfit2: 1.1300,
+      takeProfit3: 1.1350,
       confidence: 60,
-      riskRewardRatio: "1:1",
-      smcContext: content,
-      fundamentalAnalysis: "Auto-generated",
-      correlationNote: "Auto-generated",
-      supportResistance: {
-        supports: [1.1200, 1.1150],
-        resistances: [1.1269, 1.1300]
-      }
     };
 
-    return res.status(200).json(result);
-
+    return res.status(200).json(data || mock);
   } catch (err: any) {
-    console.error("AI API error:", err);
-    return res.status(500).json({ error: String(err) });
+    console.error("Handler Error:", err);
+    return res.status(500).json({ error: err.message });
   }
 }
