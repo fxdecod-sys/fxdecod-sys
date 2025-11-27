@@ -1,118 +1,92 @@
-import { GoogleGenAI, Type, Schema } from "@google/genai";
+import { AnalysisRequest, AnalysisResponse } from "../types";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Schema definition for strict JSON output
-const responseSchema: Schema = {
-  type: Type.OBJECT,
-  properties: {
-    pair: { type: Type.STRING },
-    currentPrice: { type: Type.NUMBER },
-    action: { type: Type.STRING, enum: ['BUY', 'SELL', 'NEUTRAL'] },
-    entry: { type: Type.NUMBER },
-    stopLoss: { type: Type.NUMBER },
-    takeProfit1: { type: Type.NUMBER },
-    takeProfit2: { type: Type.NUMBER },
-    takeProfit3: { type: Type.NUMBER },
-    confidence: { type: Type.NUMBER },
-    riskRewardRatio: { type: Type.STRING },
-    smcContext: { type: Type.STRING },
-    fundamentalAnalysis: { type: Type.STRING },
-    correlationNote: { type: Type.STRING },
-    supportResistance: {
-      type: Type.OBJECT,
-      properties: {
-        supports: { type: Type.ARRAY, items: { type: Type.NUMBER } },
-        resistances: { type: Type.ARRAY, items: { type: Type.NUMBER } },
-      }
+function parseServiceAccount() {
+  const rawJson = process.env.GOOGLE_APPLICATION_CREDENTIALS || "";
+  const b64 = process.env.GOOGLE_CREDENTIALS_B64 || "";
+
+  if (b64) {
+    try {
+      const decoded = Buffer.from(b64, "base64").toString("utf8");
+      return JSON.parse(decoded);
+    } catch (e) {
+      console.error("Failed to parse GOOGLE_CREDENTIALS_B64:", e);
+      throw new Error("Invalid GOOGLE_CREDENTIALS_B64");
     }
-  },
-  required: [
-    "pair", "currentPrice", "action", "entry", "stopLoss", 
-    "takeProfit1", "takeProfit2", "takeProfit3", "confidence", 
-    "smcContext", "fundamentalAnalysis", "correlationNote", "supportResistance"
-  ]
-};
+  }
 
-// Vercel Serverless Function Handler
-export default async function handler(req: Request) {
-  if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method Not Allowed' }), { status: 405 });
+  if (rawJson) {
+    try {
+      return JSON.parse(rawJson);
+    } catch (e) {
+      console.error("Failed to parse GOOGLE_APPLICATION_CREDENTIALS:", e);
+      throw new Error("Invalid GOOGLE_APPLICATION_CREDENTIALS");
+    }
+  }
+
+  throw new Error("No Google service account credentials provided");
+}
+
+let aiClient: any;
+try {
+  const serviceAccount = parseServiceAccount();
+  if (!serviceAccount || !serviceAccount.client_email || !serviceAccount.private_key) {
+    console.error("Service account appears invalid:", {
+      client_email: serviceAccount?.client_email,
+      has_private_key: Boolean(serviceAccount?.private_key)
+    });
+    throw new Error("Service account JSON missing client_email or private_key");
+  }
+  aiClient = new GoogleGenerativeAI({ credentials: serviceAccount });
+  console.log("AI client initialized using @google/generative-ai");
+} catch (initErr: any) {
+  console.error("Initialization error:", initErr);
+}
+
+export default async function handler(req: any, res: any) {
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+
+  if (!aiClient) {
+    console.error("aiClient not initialized");
+    return res.status(500).json({ error: "Server misconfigured: AI client not initialized. Check logs." });
   }
 
   try {
-    const { pair, timeframe, strategy } = await req.json();
-
-    const apiKey = process.env.API_KEY;
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: 'Server configuration error: Missing API Key' }), { status: 500 });
+    const requestData: AnalysisRequest = req.body;
+    if (!requestData || !requestData.pair) {
+      return res.status(400).json({ error: "Invalid request body" });
     }
 
-    const ai = new GoogleGenAI({ apiKey });
+    console.log("Received analyze request for", requestData.pair, requestData.timeframe);
 
-    // 1. Context Gathering
-    const now = new Date();
-    const utcTime = now.toUTCString();
-    const utcHour = now.getUTCHours();
-    
-    let session = "Asian Session";
-    if (utcHour >= 7 && utcHour < 13) session = "London Session";
-    if (utcHour >= 13 && utcHour < 21) session = "New York Session";
-
-    // 2. Prompt Engineering
-    const prompt = `
-      Act as a Senior Institutional SMC (Smart Money Concepts) Analyst.
-      
-      Context:
-      - Pair: ${pair}
-      - Timeframe: ${timeframe}
-      - Strategy: ${strategy}
-      - Current Time (UTC): ${utcTime}
-      - Market Session: ${session}
-
-      Task:
-      1. Use the 'googleSearch' tool to find the LATEST LIVE price for ${pair}. Do not estimate.
-      2. Search for the most recent high-impact economic news from the last 6 hours affecting this pair.
-      3. If the pair is XAUUSD (Gold), you MUST check DXY (Dollar Index) and US 10Y Bond Yields for correlation.
-      4. Analyze market structure using SMC (Order Blocks, Fair Value Gaps, Liquidity Sweeps).
-      5. Determine a trade setup:
-         - If conditions are unclear, set action to NEUTRAL.
-         - If BUY/SELL:
-           - Entry: Current Price or nearest Order Block.
-           - Stop Loss (SL): Below/Above recent swing structure.
-           - Take Profit 1 (TP1): STRICTLY calculate TP1 so that Reward = Risk (1:1 Ratio). Formula: Entry + (Entry - SL) for Buy, Entry - (SL - Entry) for Sell.
-           - TP2 and TP3: Extended targets at next liquidity pools.
-      
-      Output Requirement:
-      - Return ONLY valid JSON matching the schema provided.
-      - 'confidence' should be a number between 0 and 100.
-      - 'fundamentalAnalysis' should be a concise summary of news impact.
-      - 'smcContext' should explain the technical reason (e.g., "Retest of bullish Order Block on 1H").
-    `;
-
-    const response = await ai.models.generateContent({
+    const aiResponse = await aiClient.chat({
       model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        tools: [{ googleSearch: {} }],
-        responseMimeType: "application/json",
-        responseSchema: responseSchema,
-        temperature: 0.1
-      }
+      messages: [
+        { role: "system", content: "أنت محلل SMC محترف" },
+        { role: "user", content: JSON.stringify(requestData) }
+      ],
     });
 
-    const textResponse = response.text;
-    
-    if (!textResponse) {
-       return new Response(JSON.stringify({ error: 'AI returned empty response' }), { status: 500 });
+    // The generative-ai client may return different shapes depending on version.
+    const outputText = (aiResponse as any).output_text || (aiResponse as any)?.responses?.[0]?.candidates?.[0]?.content || (aiResponse as any)?.text || "{}";
+
+    console.log("AI output preview:", String(outputText).slice(0, 1000));
+
+    try {
+      const data: AnalysisResponse = JSON.parse(outputText);
+      return res.status(200).json(data);
+    } catch (e) {
+      console.error("Failed to parse AI output as JSON:", e);
+      // Return raw output under rawOutput to aid debugging
+      return res.status(200).json({ rawOutput: outputText });
     }
-
-    // Return the pure JSON to the frontend
-    return new Response(textResponse, {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
 
   } catch (error: any) {
-    console.error("Backend Analysis Error:", error);
-    return new Response(JSON.stringify({ error: error.message || 'Internal Server Error' }), { status: 500 });
+    console.error("AI Error:", error);
+    const message = error?.message || String(error);
+    if (message.toLowerCase().includes("unauth") || message.includes("401") || message.includes("permission")) {
+      return res.status(401).json({ error: "Authentication error with Google API: " + message });
+    }
+    return res.status(500).json({ error: message });
   }
 }
