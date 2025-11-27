@@ -3,68 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق الذكاء الاصطناعي</title>
+    <title>FX Decod - تحليل السوق والتداول</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background: #f0f0f0;
-            padding: 50px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
         }
+        
         .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 600px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
         }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 15px;
+            color: #ffd700;
+        }
+        
+        .analysis-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+        
         textarea {
             width: 100%;
-            height: 100px;
-            margin: 10px 0;
-            padding: 10px;
-        }
-        button {
-            background: #007bff;
-            color: white;
-            padding: 10px 20px;
+            height: 120px;
+            padding: 15px;
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            margin-bottom: 15px;
+            resize: vertical;
+        }
+        
+        button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
             cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            color: #333;
+            display: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #fff;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🌐 تطبيق تحليل النصوص</h1>
-        <p>ادخل النص الذي تريد تحليله:</p>
+        <header>
+            <h1>🚀 FX Decod - نظام تحليل السوق</h1>
+            <p class="subtitle">تحليل الذكاء الاصطناعي للأسواق المالية والأخبار والشارتات</p>
+        </header>
         
-        <textarea id="textInput" placeholder="اكتب النص هنا..."></textarea>
-        <br>
-        <button onclick="analyzeText()">تحليل النص</button>
+        <div class="features">
+            <div class="feature-card">
+                <h3>📊 تحليل الشارتات</h3>
+                <p>تحليل فني متقدم للرسوم البيانية وأنماط التداول</p>
+            </div>
+            <div class="feature-card">
+                <h3>📰 تحليل الأخبار</h3>
+                <p>تحليل تلقائي للأخبار المالية وتأثيرها على الأسواق</p>
+            </div>
+            <div class="feature-card">
+                <h3>🎯 إشارات التداول</h3>
+                <p>توصيات ذكية بناءً على تحليل متعدد العوامل</p>
+            </div>
+        </div>
         
-        <div id="result" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px;"></div>
+        <div class="analysis-section">
+            <h2>🔍 محلل النصوص والأخبار</h2>
+            <p>ادخل نص الخبر أو وصف السوق للتحليل:</p>
+            
+            <textarea id="textInput" placeholder="مثال: البنك المركزي الأوروبي يعلن عن خفض أسعار الفائدة..."></textarea>
+            
+            <button onclick="analyzeMarket()">تحليل السوق</button>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>جاري التحليل بواسطة الذكاء الاصطناعي...</p>
+            </div>
+            
+            <div class="result" id="result">
+                <!-- ستظهر النتائج هنا -->
+            </div>
+        </div>
+        
+        <footer>
+            <p>FX Decod System &copy; 2024 - نظام متقدم لتحليل الأسواق المالية</p>
+        </footer>
     </div>
 
     <script>
-        // دالة التحليل - نسخة مبسطة للتجربة
-        function analyzeText() {
+        function analyzeMarket() {
             const text = document.getElementById('textInput').value;
             const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
             
-            if (!text) {
-                resultDiv.innerHTML = "<p style='color: red;'>⚠️ الرجاء إدخال نص أولاً</p>";
+            if (!text.trim()) {
+                showResult('⚠️ الرجاء إدخال نص أو خبر مالي للتحليل', 'error');
                 return;
             }
             
-            // نتيجة تجريبية مؤقتة
-            resultDiv.innerHTML = `
-                <h3>✅ تم التحليل بنجاح!</h3>
+            // إظهار تحميل
+            loadingDiv.style.display = 'block';
+            resultDiv.style.display = 'none';
+            
+            // محاكاة التحليل (مؤقتاً)
+            setTimeout(() => {
+                loadingDiv.style.display = 'none';
+                
+                // نتائج تجريبية - سنستبدلها بالذكاء الاصطناعي لاحقاً
+                const analysis = generateMockAnalysis(text);
+                showResult(analysis, 'success');
+            }, 2000);
+        }
+        
+        function generateMockAnalysis(text) {
+            const patterns = [
+                "📈 اتجاه صاعد: إشارات شراء قوية",
+                "📉 اتجاه هابط: احتياط في التداول", 
+                "➡️ اتجاه جانبي: انتظار كسر المحور",
+                "🎯 فرصة تداول: إعداد تقني جيد"
+            ];
+            
+            const randomPattern = patterns[Math.floor(Math.random() * patterns.length)];
+            
+            return `
+                <h3>🎪 نتيجة التحليل (نسخة تجريبية)</h3>
                 <p><strong>النص المدخل:</strong> ${text}</p>
-                <p><strong>التحليل:</strong> هذه نسخة تجريبية. سيتم ربطها بالذكاء الاصطناعي لاحقاً.</p>
-                <p><em>🔧 جاري تطوير النظام...</em></p>
+                <div style="margin: 15px 0; padding: 15px; background: #e3f2fd; border-radius: 8px;">
+                    <h4 style="color: #1976d2;">📊 التوصية: ${randomPattern}</h4>
+                    <p><strong>مستويات الدعم:</strong> 1.0850 - 1.0820</p>
+                    <p><strong>مستويات المقاومة:</strong> 1.0950 - 1.0980</p>
+                    <p><strong>إدارة المخاطر:</strong> استوقف الخسارة عند 1.0800</p>
+                </div>
+                <p><em>🔧 ملاحظة: هذا تحليل تجريبي. جاري ربط النظام بالذكاء الاصطناعي الحقيقي...</em></p>
             `;
+        }
+        
+        function showResult(content, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = content;
+            resultDiv.style.display = 'block';
+            resultDiv.style.borderLeft = type === 'error' ? '5px solid #ff4444' : '5px solid #4CAF50';
         }
     </script>
 </body>
