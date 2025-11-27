@@ -1,10 +1,18 @@
 import { GoogleGenAI } from "@google/genai";
 import { MarketAnalysis, Timeframe, StrategyStyle } from "../types";
 
-// Initialize the client
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Note: Ensure the API key is strictly obtained from process.env.API_KEY
+// We move initialization inside the function to prevent app crash on load if env is missing in browser context.
 
 export const analyzeMarket = async (pair: string, timeframe: Timeframe, strategy: StrategyStyle): Promise<MarketAnalysis> => {
+  
+  // Lazy initialization to be safe in browser environments
+  const apiKey = process.env.API_KEY; 
+  if (!apiKey) {
+    throw new Error("مفتاح API غير موجود. يرجى التأكد من الإعدادات.");
+  }
+  
+  const ai = new GoogleGenAI({ apiKey });
   const modelId = "gemini-2.5-flash";
 
   // Determine current market session roughly (UTC based)
