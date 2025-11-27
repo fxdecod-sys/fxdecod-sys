@@ -5,16 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FX DECOD - نظام التحليل المالي بالذكاء الاصطناعي</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- أيقونات Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- TradingView Widgets -->
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+    </script>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+    </script>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+    </script>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js" async>
+    </script>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+    </script>
 </head>
 <body>
     <!-- الهيدر -->
     <header class="navbar">
         <div class="nav-container">
             <div class="nav-brand">
-                <!-- الشعار الجديد حسب الهوية البصرية -->
                 <div class="logo-container">
                     <h1 class="logo-new">
                         <span class="logo-fx">FX</span>
@@ -29,163 +38,191 @@
         </div>
     </header>
 
-    <!-- شريط الأسعار المتحرك -->
-    <div class="ticker-tape">
-        <div class="ticker-content">
-            <div class="ticker-item">
-                <span>الذهب:</span>
-                <span class="price-up">4,163.30 +0.52%</span>
-            </div>
-            <div class="ticker-item">
-                <span>EUR/USD:</span>
-                <span class="price-down">1.0850 -0.12%</span>
-            </div>
-            <div class="ticker-item">
-                <span>Bitcoin:</span>
-                <span class="price-up">67,420 +1.25%</span>
-            </div>
-            <div class="ticker-item">
-                <span>DXY:</span>
-                <span class="price-down">104.15 -0.08%</span>
-            </div>
-        </div>
+    <!-- شريط الأسعار المتحرك من TradingView -->
+    <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
     </div>
 
-    <!-- لوحة التحكم الرئيسية -->
+    <!-- المحتوى الرئيسي -->
     <main class="dashboard">
         <div class="container">
-            <!-- لوحة التحكم -->
-            <div class="control-panel">
-                <div class="panel-card">
-                    <h3>⚙️ إعدادات التحليل</h3>
-                    <div class="form-group">
-                        <label>الزوج المالي:</label>
-                        <select id="symbolSelect">
-                            <option value="XAUUSD">الذهب (XAUUSD)</option>
-                            <option value="EURUSD">يورو/دولار (EURUSD)</option>
-                            <option value="GBPUSD">جنيه/دولار (GBPUSD)</option>
-                            <option value="USDJPY">دولار/ين (USDJPY)</option>
-                            <option value="USOIL">النفط (USOIL)</option>
-                        </select>
+            <div class="layout-grid">
+                <!-- العمود الأيسر - القوائم -->
+                <div class="sidebar-left">
+                    <!-- اتخاذ التحليل -->
+                    <div class="menu-card">
+                        <h3 class="menu-title">اتخاذ التحليل</h3>
+                        <div class="menu-items">
+                            <div class="menu-item">التحليل الثلاثي</div>
+                            <div class="menu-item">التعليم الثلاثي</div>
+                            <div class="menu-item">التعليم الثلاثي</div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>الإطار الزمني:</label>
-                        <select id="timeframeSelect">
-                            <option value="M1">سكالبيج (M1-M5)</option>
-                            <option value="M15">المتاجرة اليومية (M15-H1)</option>
-                            <option value="H4">سوينج (H4-D1)</option>
-                        </select>
+
+                    <!-- ايجاد التحليل الذكي -->
+                    <div class="menu-card">
+                        <h3 class="menu-title">ايجاد التحليل الذكي</h3>
+                        <div class="menu-items">
+                            <div class="menu-item">(Conservative) Enibro</div>
+                            <div class="menu-item">Intraday (H1-H4)</div>
+                            <div class="menu-item">XAUUSD</div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>الاستراتيجية:</label>
-                        <select id="strategySelect">
-                            <option value="conservative">محافظة (Conservative)</option>
-                            <option value="moderate">متوسطة (Moderate)</option>
-                            <option value="aggressive">هجومية (Aggressive)</option>
-                        </select>
+
+                    <!-- التاريخ -->
+                    <div class="data-card">
+                        <h3 class="data-title">Gold Spot / U.S. Dollar - 1h - OANDA</h3>
+                        <div class="price-data">
+                            <div class="price-item">
+                                <span>O</span>
+                                <span>4,160.210</span>
+                            </div>
+                            <div class="price-item">
+                                <span>H</span>
+                                <span>4,164.565</span>
+                            </div>
+                            <div class="price-item">
+                                <span>L</span>
+                                <span>4,159.565</span>
+                            </div>
+                            <div class="price-item">
+                                <span>C</span>
+                                <span class="price-up">4,163.625 +3.445 (+0.08%)</span>
+                            </div>
+                            <div class="price-item">
+                                <span>Vol - Ticks</span>
+                                <span>11.84K</span>
+                            </div>
+                        </div>
                     </div>
-                    <button class="analyze-btn" onclick="startAnalysis()">
-                        🚀 ابدأ التحليل الذكي
-                    </button>
+
+                    <!-- التوزيع -->
+                    <div class="distribution-card">
+                        <h3 class="menu-title">توزيع</h3>
+                        <div class="distribution-items">
+                            <div class="dist-item">TradingView</div>
+                            <div class="dist-numbers">
+                                <span>14</span>
+                                <span>16</span>
+                                <span>18</span>
+                                <span>19</span>
+                                <span>20</span>
+                                <span>21</span>
+                                <span>23</span>
+                                <span>25</span>
+                                <span>26</span>
+                                <span>27</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- الشبكة الرئيسية -->
-            <div class="main-grid">
-                <!-- الشارت -->
-                <div class="chart-section">
-                    <div class="section-header">
-                        <h3>📊 الرسم البياني المباشر</h3>
-                        <div class="time-filters">
-                            <button class="time-btn active">1D</button>
-                            <button class="time-btn">1W</button>
-                            <button class="time-btn">1M</button>
+                <!-- العمود الأوسط - الشارت والأدوات -->
+                <div class="main-content">
+                    <!-- الشارت الرئيسي -->
+                    <div class="chart-section">
+                        <div class="chart-header">
+                            <h3>Technical Analysis for XAUUSD</h3>
+                            <div class="time-filters">
+                                <button class="time-btn active">1 minute</button>
+                                <button class="time-btn">5 minutes</button>
+                                <button class="time-btn">1 hour</button>
+                                <button class="time-btn">More</button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <!-- شارت TradingView -->
+                            <div class="tradingview-widget-container">
+                                <div id="tradingview_chart"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="chart-container">
-                        <!-- سيتم تضمين شارت TradingView هنا -->
-                        <div class="chart-placeholder">
-                            <p>📈 شارت TradingView سيعرض هنا</p>
-                            <small>سيتم ربط الشارت الحي عند النشر النهائي</small>
+
+                    <!-- الأدوات الإضافية -->
+                    <div class="tools-grid">
+                        <!-- التحليل الفني -->
+                        <div class="tool-card">
+                            <div class="tradingview-widget-container">
+                                <div class="tradingview-widget-container__widget" id="technical-analysis"></div>
+                            </div>
+                        </div>
+
+                        <!-- الخريطة الحرارية -->
+                        <div class="tool-card">
+                            <div class="tradingview-widget-container">
+                                <div class="tradingview-widget-container__widget" id="forex-heat-map"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- الأدوات المساعدة -->
-                <div class="widgets-grid">
-                    <!-- مقياس الضغط الفني -->
-                    <div class="widget-card">
-                        <h4>⚡ مقياس ضغط السيولة - الذهب</h4>
-                        <div class="gauge-container">
-                            <div class="gauge">
-                                <div class="gauge-fill" style="width: 75%;"></div>
-                            </div>
-                            <div class="gauge-labels">
-                                <span>بيع قوي</span>
-                                <span class="active">شراء قوي</span>
-                            </div>
+                <!-- العمود الأيمن - النماذج والمعلومات -->
+                <div class="sidebar-right">
+                    <!-- النموذج -->
+                    <div class="model-card">
+                        <h3 class="menu-title">النموذج</h3>
+                        <div class="menu-items">
+                            <div class="menu-item">(Forest Heatmap) Cultural and global growth</div>
+                            <div class="menu-item">EURO</div>
+                            <div class="menu-item">USD</div>
+                            <div class="menu-item">JPY</div>
+                            <div class="menu-item">GBP</div>
                         </div>
                     </div>
 
-                    <!-- الخريطة الحرارية -->
-                    <div class="widget-card">
-                        <h4>🔥 خريطة قوة العملات</h4>
-                        <div class="heatmap">
-                            <div class="currency-row strong">
-                                <span>USD</span>
-                                <div class="heat-bar" style="width: 85%;"></div>
-                            </div>
-                            <div class="currency-row weak">
-                                <span>JPY</span>
-                                <div class="heat-bar" style="width: 35%;"></div>
-                            </div>
-                            <div class="currency-row medium">
+                    <!-- المادة -->
+                    <div class="currency-card">
+                        <h3 class="menu-title">المادة</h3>
+                        <div class="currency-data">
+                            <div class="currency-row">
                                 <span>EUR</span>
-                                <div class="heat-bar" style="width: 65%;"></div>
+                                <div class="currency-values">
+                                    <span>0.01%</span>
+                                    <span>0.13%</span>
+                                    <span>0.11%</span>
+                                    <span>0.6%</span>
+                                </div>
                             </div>
-                            <div class="currency-row medium">
-                                <span>GBP</span>
-                                <div class="heat-bar" style="width: 60%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- السؤال -->
+                    <div class="currency-card">
+                        <h3 class="menu-title">السؤال</h3>
+                        <div class="currency-data">
+                            <div class="currency-row">
+                                <span>USD</span>
+                                <div class="currency-values">
+                                    <span>0.02%</span>
+                                    <span>0.12%</span>
+                                    <span>0.12%</span>
+                                    <span>0.1%</span>
+                                </div>
                             </div>
-                            <div class="currency-row strong">
-                                <span>CAD</span>
-                                <div class="heat-bar" style="width: 80%;"></div>
-                            </div>
+                        </div>
+                    </div>
+
+                    <!-- التاريخ -->
+                    <div class="info-card">
+                        <h3 class="menu-title">التاريخ</h3>
+                        <div class="menu-items">
+                            <div class="menu-item">(Gold Momentum) Lesal - digital</div>
+                            <div class="menu-item">مقياس خطط السوق</div>
                         </div>
                     </div>
 
                     <!-- التقويم الاقتصادي -->
-                    <div class="widget-card">
-                        <h4>📅 التقويم الاقتصادي</h4>
-                        <div class="calendar-events">
-                            <div class="event-item high-impact">
-                                <span>14:30</span>
-                                <span>USD - بيانات التوظيف</span>
-                                <span class="impact-high">عالية</span>
-                            </div>
-                            <div class="event-item medium-impact">
-                                <span>15:00</span>
-                                <span>CAD - معدل البطالة</span>
-                                <span class="impact-medium">متوسطة</span>
-                            </div>
-                            <div class="event-item medium-impact">
-                                <span>16:30</span>
-                                <span>EUR - كلمة رئيس ECB</span>
-                                <span class="impact-medium">متوسطة</span>
-                            </div>
+                    <div class="calendar-card">
+                        <div class="tradingview-widget-container">
+                            <div class="tradingview-widget-container__widget" id="economic-calendar"></div>
                         </div>
                     </div>
-                </div>
-
-                <!-- نتائج التحليل -->
-                <div id="analysisResults" class="analysis-results hidden">
-                    <!-- سيتم ملء هذا القسم بنتائج التحليل -->
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- التذييل مع روابط التواصل -->
+    <!-- التذييل -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
@@ -226,6 +263,8 @@
         </div>
     </footer>
 
+    <!-- scripts -->
     <script src="script.js"></script>
+    <script src="tradingview-widgets.js"></script>
 </body>
 </html>
