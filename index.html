@@ -1,160 +1,66 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FX DECOD | AI Trading Assistant</title>
-    
-    <!-- Tailwind CSS (CDN) -->
+<html lang="ar" dir="rtl" class="bg-slate-950">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FX DECOD | AI Market Analysis</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              cairo: ['Cairo', 'sans-serif'],
+            },
+            colors: {
+              slate: {
+                850: '#152033', // Custom depth
+                950: '#020617',
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <!-- Google Fonts: Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
-
-    <!-- TradingView Main Library -->
-    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-<script type="importmap">
+    <style>
+      body {
+        font-family: 'Cairo', sans-serif;
+      }
+      /* Scrollbar Styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0f172a; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #334155; 
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #475569; 
+      }
+    </style>
+  <script type="importmap">
 {
   "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
     "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
   }
 }
 </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-<body class="bg-slate-950 text-slate-50 font-cairo overflow-x-hidden">
-
-    <!-- Navbar -->
-    <nav class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 h-20">
-        <div class="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
-            <!-- Logo -->
-            <div class="flex items-baseline select-none" dir="ltr">
-                <span class="text-3xl font-black text-white tracking-tighter">FX</span>
-                <span class="text-3xl font-black bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent tracking-tighter">Decod</span>
-            </div>
-
-            <!-- Status -->
-            <div class="hidden sm:flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-xs text-gray-400 font-bold">AI System Connected</span>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Ticker Tape -->
-    <div id="ticker-tape-container" class="w-full h-12 bg-slate-900 border-b border-slate-800"></div>
-
-    <!-- Main Content -->
-    <main class="max-w-6xl mx-auto px-4 pt-6 pb-20">
-
-        <!-- Control Panel -->
-        <section class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl mb-8 relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-emerald-500"></div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <!-- Asset -->
-                <div class="space-y-2">
-                    <label class="text-xs text-gray-500 font-bold">الأصل المالي</label>
-                    <select id="pair-select" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none font-mono">
-                        <option value="XAUUSD">Gold (XAUUSD)</option>
-                        <option value="EURUSD">EUR/USD</option>
-                        <option value="GBPUSD">GBP/USD</option>
-                        <option value="USDJPY">USD/JPY</option>
-                        <option value="USDCAD">USD/CAD</option>
-                        <option value="BTCUSD">Bitcoin</option>
-                        <option value="ETHUSD">Ethereum</option>
-                        <option value="USOIL">US Oil (WTI)</option>
-                        <option value="US30">Dow Jones (US30)</option>
-                        <option value="SPX500">S&P 500</option>
-                    </select>
-                </div>
-
-                <!-- Timeframe -->
-                <div class="space-y-2">
-                    <label class="text-xs text-gray-500 font-bold">نوع التحليل</label>
-                    <select id="timeframe-select" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none">
-                        <option value="Scalping (M15)">مضاربة سريعة (M15)</option>
-                        <option value="Intraday (H1-H4)">يومي (H1-H4)</option>
-                        <option value="Swing (Daily)">تمركز (Daily)</option>
-                    </select>
-                </div>
-
-                <!-- Strategy -->
-                <div class="space-y-2">
-                    <label class="text-xs text-gray-500 font-bold">النمط</label>
-                    <select id="strategy-select" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none">
-                        <option value="Conservative">محافظ (Conservative)</option>
-                        <option value="Aggressive">هجومي (Aggressive)</option>
-                    </select>
-                </div>
-
-                <!-- Button -->
-                <div class="flex items-end">
-                    <button id="analyze-btn" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-blue-900/20 transition-all active:scale-95 flex items-center justify-center gap-2">
-                        <span id="btn-text">ابدأ التحليل الذكي</span>
-                        <div id="btn-spinner" class="hidden w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Loading View -->
-        <div id="loading-view" class="hidden text-center py-12 bg-slate-900/30 rounded-2xl border border-slate-800/50 mb-8">
-             <div class="flex justify-center mb-4">
-                 <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-emerald-500"></div>
-             </div>
-             <h3 class="text-xl font-bold text-white">جاري تحليل الأسواق...</h3>
-             <p class="text-sm text-gray-400 mt-2">نبحث عن السيولة، الأخبار، ومناطق الدخول (SMC)</p>
-        </div>
-
-        <!-- Results Container -->
-        <div id="results-container" class="hidden space-y-6 mb-8"></div>
-
-        <!-- Charts & Widgets -->
-        <div class="space-y-8">
-            <!-- Main Chart -->
-            <div class="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-lg">
-                <div class="p-3 bg-slate-800/50 border-b border-slate-700">
-                    <h3 class="text-xs font-bold text-gray-400">شارت مباشر</h3>
-                </div>
-                <div id="main-chart-container" class="h-[500px] w-full"></div>
-            </div>
-
-            <!-- Grid Widgets -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-lg">
-                    <div class="p-3 bg-slate-800/50 border-b border-slate-700"><h3 class="text-xs font-bold text-gray-400">مقياس السيولة (الذهب)</h3></div>
-                    <div id="technical-gauge-container" class="h-[400px]"></div>
-                </div>
-                <div class="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-lg">
-                    <div class="p-3 bg-slate-800/50 border-b border-slate-700"><h3 class="text-xs font-bold text-gray-400">خريطة العملات</h3></div>
-                    <div id="heatmap-container" class="h-[400px]"></div>
-                </div>
-            </div>
-
-            <!-- Calendar -->
-            <div class="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-lg">
-                <div class="p-3 bg-slate-800/50 border-b border-slate-700"><h3 class="text-xs font-bold text-gray-400">التقويم الاقتصادي</h3></div>
-                <div id="calendar-container" class="h-[400px]"></div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-slate-900 border-t border-slate-800 py-8 mt-12 text-center text-xs text-gray-600">
-        <p>&copy; 2025 FX DECOD. All rights reserved.</p>
-    </footer>
-
-    <!-- Logic -->
-    <script type="module" src="app.js"></script>
-<script type="module" src="/index.tsx"></script>
+  <body class="bg-slate-950 text-slate-200 overflow-x-hidden min-h-screen flex flex-col">
+    <div id="root" class="flex-grow flex flex-col"></div>
+  <script type="module" src="/index.tsx"></script>
 </body>
 </html>

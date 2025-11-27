@@ -1,67 +1,50 @@
+export enum ActionType {
+  BUY = 'BUY',
+  SELL = 'SELL',
+  NEUTRAL = 'NEUTRAL'
+}
+
 export interface TradeLevel {
   price: number;
-  description?: string;
+  label: string;
 }
 
-export interface TradeSetup {
-  type: 'BUY' | 'SELL' | 'NEUTRAL';
-  entry: number;
-  stopLoss: number;
-  tp1: number;
-  tp2: number;
-  tp3: number;
-  riskRewardRatio: string;
-  confidence: number; // 0-100
-  reasoning: string[];
-  managementTips: string[]; // New: Specific advice for managing this trade
+export interface SupportResistance {
+  supports: number[];
+  resistances: number[];
 }
 
-export interface TechnicalIndicator {
-  name: string;
-  value: string | number;
-  signal: 'BUY' | 'SELL' | 'NEUTRAL';
-}
-
-export interface MarketAnalysis {
+export interface AnalysisResponse {
   pair: string;
   currentPrice: number;
-  timestamp: string;
-  session: string; // New: London, New York, Asian, etc.
-  trend: 'UP' | 'DOWN' | 'SIDEWAYS';
-  fundamentals: {
-    summary: string;
-    impactLevel: 'HIGH' | 'MEDIUM' | 'LOW';
-    newsPoints: string[];
-    upcomingEvents: string[]; // New: Specific next events
-  };
-  technicals: {
-    rsi: number;
-    macd: string;
-    mas: string;
-    patterns: string[];
-    indicators: TechnicalIndicator[];
-    institutionalBias: string; // New: Smart Money Concept
-  };
-  correlations: { // New: DXY, Yields, etc.
-    asset: string;
-    correlation: string; // e.g. "Inverse - Strong"
-    details: string;
-  }[];
-  levels: {
-    support: number[];
-    resistance: number[];
-  };
-  setup: TradeSetup;
-  sources: { uri: string; title: string }[];
+  action: ActionType;
+  entry: number;
+  stopLoss: number;
+  takeProfit1: number;
+  takeProfit2: number;
+  takeProfit3: number;
+  confidence: number;
+  riskRewardRatio: string;
+  smcContext: string; // Order blocks, liquidity grabs
+  fundamentalAnalysis: string;
+  correlationNote: string;
+  supportResistance: SupportResistance;
 }
 
-export enum Timeframe {
-  SCALPING = 'Scalping (M5-M15)',
-  INTRADAY = 'Intraday (H1-H4)',
-  SWING = 'Swing (Daily)',
+export interface AnalysisRequest {
+  pair: string;
+  timeframe: string;
+  strategy: string;
 }
 
-export enum StrategyStyle {
-  CONSERVATIVE = 'محافظ (Conservative)',
-  AGGRESSIVE = 'مغامر (Aggressive)',
-}
+export const PAIRS = [
+  'XAUUSD', 'EURUSD', 'GBPUSD', 'USDJPY', 'USDCAD', 'BTCUSD', 'ETHUSD', 'WTI_OIL'
+];
+
+export const TIMEFRAMES = [
+  'Scalping (5m)', 'Intraday (15m)', 'Intraday (1h)', 'Swing (4h)', 'Swing (Daily)'
+];
+
+export const STRATEGIES = [
+  'Smart Money Concepts (SMC)', 'Conservative Trend', 'Aggressive Reversal'
+];

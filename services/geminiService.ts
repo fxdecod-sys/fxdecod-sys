@@ -1,137 +1,111 @@
-import { GoogleGenAI } from "@google/genai";
-import { MarketAnalysis, Timeframe, StrategyStyle } from "../types";
+import { GoogleGenAI, Type, Schema } from "@google/genai";
+import { AnalysisRequest, AnalysisResponse, ActionType } from "../types";
 
-// Note: Ensure the API key is strictly obtained from process.env.API_KEY
-// We move initialization inside the function to prevent app crash on load if env is missing in browser context.
+// Ensure API Key is available
+const API_KEY = process.env.API_KEY || '';
 
-export const analyzeMarket = async (pair: string, timeframe: Timeframe, strategy: StrategyStyle): Promise<MarketAnalysis> => {
-  
-  // Lazy initialization to be safe in browser environments
-  const apiKey = process.env.API_KEY; 
-  if (!apiKey) {
-    throw new Error("مفتاح API غير موجود. يرجى التأكد من الإعدادات.");
-  }
-  
-  const ai = new GoogleGenAI({ apiKey });
-  const modelId = "gemini-2.5-flash";
+const ai = new GoogleGenAI({ apiKey: API_KEY });
 
-  // Determine current market session roughly (UTC based)
-  const hour = new Date().getUTCHours();
-  let session = "Asian Session";
-  if (hour >= 7 && hour < 13) session = "London Session";
-  if (hour >= 13 && hour < 17) session = "London/New York Overlap";
-  if (hour >= 17 && hour < 21) session = "New York Session";
-
-  // Logic for correlations: Explicitly checking for Oil/Energy assets
-  let correlationInstruction = "قم بتحليل ارتباط العملة الأساسية بمؤشر الدولار أو السلع ذات الصلة.";
-  if (pair.includes('XAU') || pair.includes('GOLD')) {
-    correlationInstruction = "يجب عليك تحليل مؤشر الدولار (DXY) وعوائد السندات الأمريكية (US10Y) لأنها تؤثر بشدة على الذهب.";
-  } else if (pair.includes('OIL') || pair.includes('WTI') || pair.includes('BRENT')) {
-    correlationInstruction = "هذا تحليل للنفط. يجب تحليل مخزونات النفط الأمريكية، وقوة الدولار الكندي (CAD) لأنه مرتبط بالنفط، والتوترات الجيوسياسية الحالية.";
-  }
-
-  const prompt = `
-    أنت خبير أسواق مالية (Senior Financial Analyst) ومتداول مؤسسي يستخدم مفاهيم المال الذكي (SMC).
-    
-    معلومات الجلسة:
-    - الوقت الحالي (UTC): ${hour}:00
-    - الجلسة المقدرة: ${session}
-    
-    طلب التحليل:
-    - الأصل: ${pair}
-    - الإطار الزمني: ${timeframe}
-    - الأسلوب: ${strategy}
-
-    المهام الإلزامية (Algorithm Rules):
-    1. **البحث المباشر (LIVE DATA)**: استخدم أداة Google Search لجلب السعر الحالي بدقة (بالسنت)، وآخر الأخبار السياسية والاقتصادية خلال الـ 6 ساعات الماضية.
-    2. **الرياضيات الصارمة (1:1 RR Ratio)**:
-       - حساب الهدف الأول (TP1) يجب أن يكون مساوياً للمخاطرة تماماً.
-       - معادلة الشراء: TP1 = Entry + (Entry - SL).
-       - معادلة البيع: TP1 = Entry - (SL - Entry).
-       - هذا شرط غير قابل للتفاوض لضمان إدارة مالية سليمة.
-    3. **التحليل الفني (SMC)**: حدد مناطق السيولة (Liquidity Grabs) وكتل الأوامر (Order Blocks).
-    4. **الارتباطات**: ${correlationInstruction}
-
-    تنسيق الإجابة (JSON Structure Only):
-    يجب أن يكون الرد كود JSON فقط وبدون أي نصوص إضافية، بالحقول التالية:
-    {
-      "pair": "${pair}",
-      "currentPrice": number,
-      "session": "${session}",
-      "trend": "UP" | "DOWN" | "SIDEWAYS",
-      "fundamentals": {
-        "summary": "تحليل موجز للأخبار وتأثيرها المباشر",
-        "impactLevel": "HIGH" | "MEDIUM" | "LOW",
-        "newsPoints": ["عنوان خبر 1", "عنوان خبر 2"],
-        "upcomingEvents": ["حدث قادم 1", "حدث قادم 2"]
-      },
-      "technicals": {
-        "rsi": number,
-        "macd": "وصف الإشارة",
-        "mas": "السعر فوق/تحت المتوسطات",
-        "patterns": ["نموذج فني 1", "نموذج فني 2"],
-        "institutionalBias": "وصف لتحركات صناع السوق (SMC)",
-        "indicators": [
-           { "name": "RSI", "value": number, "signal": "BUY" | "SELL" | "NEUTRAL" },
-           { "name": "Trend", "value": "Strong/Weak", "signal": "BUY" | "SELL" | "NEUTRAL" },
-           { "name": "Volume", "value": "High/Low", "signal": "BUY" | "SELL" | "NEUTRAL" }
-        ]
-      },
-      "correlations": [
-        { "asset": "DXY/CAD/Yields", "correlation": "Inverse/Direct", "details": "تفاصيل العلاقة" }
-      ],
-      "levels": {
-        "support": [number, number, number],
-        "resistance": [number, number, number]
-      },
-      "setup": {
-        "type": "BUY" | "SELL" | "NEUTRAL",
-        "entry": number,
-        "stopLoss": number,
-        "tp1": number,
-        "tp2": number,
-        "tp3": number,
-        "riskRewardRatio": "1:1 (TP1)",
-        "confidence": number,
-        "reasoning": ["سبب 1", "سبب 2", "سبب 3"],
-        "managementTips": ["نصيحة 1", "نصيحة 2"]
+const responseSchema: Schema = {
+  type: Type.OBJECT,
+  properties: {
+    pair: { type: Type.STRING },
+    currentPrice: { type: Type.NUMBER },
+    action: { type: Type.STRING, enum: [ActionType.BUY, ActionType.SELL, ActionType.NEUTRAL] },
+    entry: { type: Type.NUMBER },
+    stopLoss: { type: Type.NUMBER },
+    takeProfit1: { type: Type.NUMBER },
+    takeProfit2: { type: Type.NUMBER },
+    takeProfit3: { type: Type.NUMBER },
+    confidence: { type: Type.NUMBER },
+    riskRewardRatio: { type: Type.STRING },
+    smcContext: { type: Type.STRING },
+    fundamentalAnalysis: { type: Type.STRING },
+    correlationNote: { type: Type.STRING },
+    supportResistance: {
+      type: Type.OBJECT,
+      properties: {
+        supports: { type: Type.ARRAY, items: { type: Type.NUMBER } },
+        resistances: { type: Type.ARRAY, items: { type: Type.NUMBER } },
       }
     }
+  },
+  required: [
+    "pair", "currentPrice", "action", "entry", "stopLoss", 
+    "takeProfit1", "takeProfit2", "takeProfit3", "confidence", 
+    "smcContext", "fundamentalAnalysis", "correlationNote", "supportResistance"
+  ]
+};
+
+export const analyzeMarket = async (request: AnalysisRequest): Promise<AnalysisResponse> => {
+  if (!API_KEY) {
+    throw new Error("Missing API Key. Please configure process.env.API_KEY in your environment.");
+  }
+
+  // 1. Context Gathering
+  const now = new Date();
+  const utcTime = now.toUTCString();
+  const utcHour = now.getUTCHours();
+  
+  let session = "Asian Session";
+  if (utcHour >= 7 && utcHour < 13) session = "London Session";
+  if (utcHour >= 13 && utcHour < 21) session = "New York Session";
+
+  // 2. Prompt Engineering
+  const prompt = `
+    Act as a Senior Institutional SMC (Smart Money Concepts) Analyst.
+    
+    Context:
+    - Pair: ${request.pair}
+    - Timeframe: ${request.timeframe}
+    - Strategy: ${request.strategy}
+    - Current Time (UTC): ${utcTime}
+    - Market Session: ${session}
+
+    Task:
+    1. Use the 'googleSearch' tool to find the LATEST LIVE price for ${request.pair}. Do not estimate.
+    2. Search for the most recent high-impact economic news from the last 6 hours affecting this pair.
+    3. If the pair is XAUUSD (Gold), you MUST check DXY (Dollar Index) and US 10Y Bond Yields for correlation.
+    4. Analyze market structure using SMC (Order Blocks, Fair Value Gaps, Liquidity Sweeps).
+    5. Determine a trade setup:
+       - If conditions are unclear, set action to NEUTRAL.
+       - If BUY/SELL:
+         - Entry: Current Price or nearest Order Block.
+         - Stop Loss (SL): Below/Above recent swing structure.
+         - Take Profit 1 (TP1): STRICTLY calculate TP1 so that Reward = Risk (1:1 Ratio). Formula: Entry + (Entry - SL) for Buy, Entry - (SL - Entry) for Sell.
+         - TP2 and TP3: Extended targets at next liquidity pools.
+    
+    Output Requirement:
+    - Return ONLY valid JSON matching the schema provided.
+    - 'confidence' should be a number between 0 and 100.
+    - 'fundamentalAnalysis' should be a concise summary of news impact.
+    - 'smcContext' should explain the technical reason (e.g., "Retest of bullish Order Block on 1H").
   `;
 
   try {
+    const modelId = "gemini-2.5-flash"; // Using 2.5 Flash for speed and grounding capabilities
+
     const response = await ai.models.generateContent({
       model: modelId,
       contents: prompt,
       config: {
         tools: [{ googleSearch: {} }],
-        temperature: 0.1, // Low temperature for precise math and data
-      },
+        responseMimeType: "application/json",
+        responseSchema: responseSchema,
+        temperature: 0.1 // Low temperature for analytical precision
+      }
     });
 
     const textResponse = response.text;
-    if (!textResponse) throw new Error("Empty response from AI");
+    if (!textResponse) {
+      throw new Error("No response from AI");
+    }
 
-    // Extract JSON using Regex
-    const jsonMatch = textResponse.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("Failed to parse analysis data");
-
-    const parsedData = JSON.parse(jsonMatch[0]);
-    
-    // Process grounding metadata for citations
-    const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
-    const sources = groundingChunks
-      .map((chunk: any) => chunk.web ? { uri: chunk.web.uri, title: chunk.web.title } : null)
-      .filter(Boolean);
-
-    return {
-      ...parsedData,
-      sources,
-      timestamp: new Date().toISOString(),
-    } as MarketAnalysis;
+    const data = JSON.parse(textResponse) as AnalysisResponse;
+    return data;
 
   } catch (error) {
     console.error("Gemini Analysis Error:", error);
-    throw new Error("فشل التحليل. يرجى المحاولة مرة أخرى أو التأكد من الرمز.");
+    throw error;
   }
 };
