@@ -1,276 +1,52 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FX DECOD - نظام التحليل المالي بالذكاء الاصطناعي</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- TradingView Script -->
-    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="FX DECOD" />
+    <link rel="manifest" href="/manifest.json" />
+    <title>FX DECOD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Cairo', sans-serif;
+        background-color: #0f172a; /* Slate 900 */
+        color: #f8fafc; /* Slate 50 */
+        -webkit-tap-highlight-color: transparent;
+      }
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #1e293b; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #475569; 
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #64748b; 
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0"
+  }
+}
+</script>
 </head>
-<body>
-    <!-- الهيدر -->
-    <header class="navbar">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <div class="logo-container">
-                    <h1 class="logo-new">
-                        <span class="logo-fx">FX</span>
-                        <span class="logo-decod">Decod</span>
-                    </h1>
-                </div>
-                <div class="ai-status">
-                    <span class="status-dot"></span>
-                    <span>AI Connected</span>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- شريط الأسعار المتحرك -->
-    <div class="ticker-tape">
-        <div class="ticker-content">
-            <div class="ticker-item">
-                <span>الذهب:</span>
-                <span class="price-up">4,163.30 +0.52%</span>
-            </div>
-            <div class="ticker-item">
-                <span>EUR/USD:</span>
-                <span class="price-down">1.0850 -0.12%</span>
-            </div>
-            <div class="ticker-item">
-                <span>Bitcoin:</span>
-                <span class="price-up">67,420 +1.25%</span>
-            </div>
-            <div class="ticker-item">
-                <span>DXY:</span>
-                <span class="price-down">104.15 -0.08%</span>
-            </div>
-            <div class="ticker-item">
-                <span>S&P 500:</span>
-                <span class="price-up">6,817.8 +2.10</span>
-            </div>
-            <div class="ticker-item">
-                <span>US 100:</span>
-                <span class="price-up">25,255.9 +6.40</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- المحتوى الرئيسي -->
-    <main class="dashboard">
-        <div class="container">
-            <div class="layout-grid">
-                <!-- العمود الأيسر - القوائم -->
-                <div class="sidebar-left">
-                    <!-- اتخاذ التحليل -->
-                    <div class="menu-card">
-                        <h3 class="menu-title">اتخاذ التحليل</h3>
-                        <div class="menu-items">
-                            <div class="menu-item">التحليل الثلاثي</div>
-                            <div class="menu-item">التعليم الثلاثي</div>
-                            <div class="menu-item">التعليم الثلاثي</div>
-                        </div>
-                    </div>
-
-                    <!-- ايجاد التحليل الذكي -->
-                    <div class="menu-card">
-                        <h3 class="menu-title">ايجاد التحليل الذكي</h3>
-                        <div class="menu-items">
-                            <div class="menu-item">(Conservative) Enibro</div>
-                            <div class="menu-item">Intraday (H1-H4)</div>
-                            <div class="menu-item">XAUUSD</div>
-                        </div>
-                    </div>
-
-                    <!-- التاريخ -->
-                    <div class="data-card">
-                        <h3 class="data-title">Gold Spot / U.S. Dollar - 1h - OANDA</h3>
-                        <div class="price-data">
-                            <div class="price-item">
-                                <span>O</span>
-                                <span>4,160.210</span>
-                            </div>
-                            <div class="price-item">
-                                <span>H</span>
-                                <span>4,164.565</span>
-                            </div>
-                            <div class="price-item">
-                                <span>L</span>
-                                <span>4,159.565</span>
-                            </div>
-                            <div class="price-item">
-                                <span>C</span>
-                                <span class="price-up">4,163.625 +3.445 (+0.08%)</span>
-                            </div>
-                            <div class="price-item">
-                                <span>Vol - Ticks</span>
-                                <span>11.84K</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- التوزيع -->
-                    <div class="distribution-card">
-                        <h3 class="menu-title">توزيع</h3>
-                        <div class="distribution-items">
-                            <div class="dist-item">TradingView</div>
-                            <div class="dist-numbers">
-                                <span>14</span>
-                                <span>16</span>
-                                <span>18</span>
-                                <span>19</span>
-                                <span>20</span>
-                                <span>21</span>
-                                <span>23</span>
-                                <span>25</span>
-                                <span>26</span>
-                                <span>27</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- العمود الأوسط - الشارت والأدوات -->
-                <div class="main-content">
-                    <!-- الشارت الرئيسي -->
-                    <div class="chart-section">
-                        <div class="chart-header">
-                            <h3>Technical Analysis for XAUUSD</h3>
-                            <div class="time-filters">
-                                <button class="time-btn active" data-timeframe="1">1 minute</button>
-                                <button class="time-btn" data-timeframe="5">5 minutes</button>
-                                <button class="time-btn" data-timeframe="60">1 hour</button>
-                                <button class="time-btn" data-timeframe="D">More</button>
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <!-- شارت TradingView -->
-                            <div id="tradingview_chart" style="height: 100%; width: 100%;"></div>
-                        </div>
-                    </div>
-
-                    <!-- الأدوات الإضافية -->
-                    <div class="tools-grid">
-                        <!-- التحليل الفني -->
-                        <div class="tool-card">
-                            <div id="technical_analysis" style="height: 100%;"></div>
-                        </div>
-
-                        <!-- الخريطة الحرارية -->
-                        <div class="tool-card">
-                            <div id="forex_heatmap" style="height: 100%;"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- العمود الأيمن - النماذج والمعلومات -->
-                <div class="sidebar-right">
-                    <!-- النموذج -->
-                    <div class="model-card">
-                        <h3 class="menu-title">النموذج</h3>
-                        <div class="menu-items">
-                            <div class="menu-item">(Forest Heatmap) Cultural and global growth</div>
-                            <div class="menu-item">EURO</div>
-                            <div class="menu-item">USD</div>
-                            <div class="menu-item">JPY</div>
-                            <div class="menu-item">GBP</div>
-                        </div>
-                    </div>
-
-                    <!-- المادة -->
-                    <div class="currency-card">
-                        <h3 class="menu-title">المادة</h3>
-                        <div class="currency-data">
-                            <div class="currency-row">
-                                <span>EUR</span>
-                                <div class="currency-values">
-                                    <span>0.01%</span>
-                                    <span>0.13%</span>
-                                    <span>0.11%</span>
-                                    <span>0.6%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- السؤال -->
-                    <div class="currency-card">
-                        <h3 class="menu-title">السؤال</h3>
-                        <div class="currency-data">
-                            <div class="currency-row">
-                                <span>USD</span>
-                                <div class="currency-values">
-                                    <span>0.02%</span>
-                                    <span>0.12%</span>
-                                    <span>0.12%</span>
-                                    <span>0.1%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- التاريخ -->
-                    <div class="info-card">
-                        <h3 class="menu-title">التاريخ</h3>
-                        <div class="menu-items">
-                            <div class="menu-item">(Gold Momentum) Lesal - digital</div>
-                            <div class="menu-item">مقياس خطط السوق</div>
-                        </div>
-                    </div>
-
-                    <!-- التقويم الاقتصادي -->
-                    <div class="calendar-card">
-                        <div id="economic_calendar" style="height: 300px;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- التذييل -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="logo-new footer-logo">
-                        <span class="logo-fx">FX</span>
-                        <span class="logo-decod">Decod</span>
-                    </div>
-                    <p class="footer-tagline">نظام متقدم لتحليل الأسواق المالية بالذكاء الاصطناعي</p>
-                </div>
-                
-                <div class="social-links">
-                    <h4>تابعنا على منصات التواصل</h4>
-                    <div class="social-icons">
-                        <a href="https://t.me/fx_decode" target="_blank" class="social-link telegram">
-                            <i class="fab fa-telegram"></i>
-                            <span>Telegram</span>
-                        </a>
-                        <a href="https://www.youtube.com/@FX.Decodee" target="_blank" class="social-link youtube">
-                            <i class="fab fa-youtube"></i>
-                            <span>YouTube</span>
-                        </a>
-                        <a href="https://www.instagram.com/fx.decodee/" target="_blank" class="social-link instagram">
-                            <i class="fab fa-instagram"></i>
-                            <span>Instagram</span>
-                        </a>
-                        <a href="https://www.tiktok.com/@fx.decodee" target="_blank" class="social-link tiktok">
-                            <i class="fab fa-tiktok"></i>
-                            <span>TikTok</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>FX DECOD System &copy; 2024 - جميع الحقوق محفوظة</p>
-            </div>
-        </div>
-    </footer>
-
-    <script src="script.js"></script>
-</body>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
 </html>
