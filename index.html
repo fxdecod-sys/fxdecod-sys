@@ -5,24 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FX DECOD | AI Trading Assistant</title>
     
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Google Fonts: Cairo -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     
-    <!-- Custom Styles -->
-    <link rel="stylesheet" href="./style.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
 
-    <!-- Import Map for Google GenAI SDK -->
-    <script type="importmap">
+    <!-- TradingView Main Library -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+<script type="importmap">
 {
   "imports": {
-    "@google/genai": "https://esm.sh/@google/genai@0.1.1",
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0"
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
   }
 }
 </script>
@@ -33,13 +34,13 @@
     <!-- Navbar -->
     <nav class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 h-20">
         <div class="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
-            <!-- Logo (LTR Forced) -->
+            <!-- Logo -->
             <div class="flex items-baseline select-none" dir="ltr">
                 <span class="text-3xl font-black text-white tracking-tighter">FX</span>
                 <span class="text-3xl font-black bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent tracking-tighter">Decod</span>
             </div>
 
-            <!-- Status Badge -->
+            <!-- Status -->
             <div class="hidden sm:flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span class="text-xs text-gray-400 font-bold">AI System Connected</span>
@@ -53,12 +54,12 @@
     <!-- Main Content -->
     <main class="max-w-6xl mx-auto px-4 pt-6 pb-20">
 
-        <!-- Controls Section -->
+        <!-- Control Panel -->
         <section class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl mb-8 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-emerald-500"></div>
             
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <!-- Asset Selector -->
+                <!-- Asset -->
                 <div class="space-y-2">
                     <label class="text-xs text-gray-500 font-bold">الأصل المالي</label>
                     <select id="pair-select" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none font-mono">
@@ -70,9 +71,7 @@
                         <option value="BTCUSD">Bitcoin</option>
                         <option value="ETHUSD">Ethereum</option>
                         <option value="USOIL">US Oil (WTI)</option>
-                        <option value="UKOIL">Brent Oil</option>
                         <option value="US30">Dow Jones (US30)</option>
-                        <option value="NAS100">Nasdaq 100</option>
                         <option value="SPX500">S&P 500</option>
                     </select>
                 </div>
@@ -81,9 +80,9 @@
                 <div class="space-y-2">
                     <label class="text-xs text-gray-500 font-bold">نوع التحليل</label>
                     <select id="timeframe-select" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none">
-                        <option value="Scalping (M15)">مضاربة سريعة (Scalping)</option>
-                        <option value="Intraday (H1-H4)">يومي (Intraday)</option>
-                        <option value="Swing (Daily)">تمركز (Swing)</option>
+                        <option value="Scalping (M15)">مضاربة سريعة (M15)</option>
+                        <option value="Intraday (H1-H4)">يومي (H1-H4)</option>
+                        <option value="Swing (Daily)">تمركز (Daily)</option>
                     </select>
                 </div>
 
@@ -96,7 +95,7 @@
                     </select>
                 </div>
 
-                <!-- Action Button -->
+                <!-- Button -->
                 <div class="flex items-end">
                     <button id="analyze-btn" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-blue-900/20 transition-all active:scale-95 flex items-center justify-center gap-2">
                         <span id="btn-text">ابدأ التحليل الذكي</span>
@@ -106,74 +105,56 @@
             </div>
         </section>
 
-        <!-- Analysis Results Container (Initially Empty) -->
-        <div id="results-container" class="hidden space-y-6 mb-8 animate-fade-in-up">
-            <!-- Content Injected by JS -->
+        <!-- Loading View -->
+        <div id="loading-view" class="hidden text-center py-12 bg-slate-900/30 rounded-2xl border border-slate-800/50 mb-8">
+             <div class="flex justify-center mb-4">
+                 <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-emerald-500"></div>
+             </div>
+             <h3 class="text-xl font-bold text-white">جاري تحليل الأسواق...</h3>
+             <p class="text-sm text-gray-400 mt-2">نبحث عن السيولة، الأخبار، ومناطق الدخول (SMC)</p>
         </div>
 
-        <!-- Main Chart -->
-        <div class="mb-8">
-            <h3 class="text-sm font-bold text-gray-400 mb-2 flex items-center gap-2">
-                <span class="w-1 h-4 bg-blue-500 rounded-full"></span>
-                شارت مباشر (Advanced Chart)
-            </h3>
-            <div id="main-chart-container" class="h-[450px] md:h-[550px] w-full bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-lg relative z-0"></div>
-        </div>
+        <!-- Results Container -->
+        <div id="results-container" class="hidden space-y-6 mb-8"></div>
 
-        <!-- Widgets Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <!-- Technical Gauge -->
+        <!-- Charts & Widgets -->
+        <div class="space-y-8">
+            <!-- Main Chart -->
             <div class="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-lg">
-                <div class="p-4 bg-slate-800/50 border-b border-slate-700">
-                    <h3 class="text-sm font-bold text-gray-300">مقياس السيولة الفنية</h3>
+                <div class="p-3 bg-slate-800/50 border-b border-slate-700">
+                    <h3 class="text-xs font-bold text-gray-400">شارت مباشر</h3>
                 </div>
-                <div id="technical-gauge-container" class="h-[350px]"></div>
+                <div id="main-chart-container" class="h-[500px] w-full"></div>
             </div>
 
-            <!-- Heatmap -->
+            <!-- Grid Widgets -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-lg">
+                    <div class="p-3 bg-slate-800/50 border-b border-slate-700"><h3 class="text-xs font-bold text-gray-400">مقياس السيولة (الذهب)</h3></div>
+                    <div id="technical-gauge-container" class="h-[400px]"></div>
+                </div>
+                <div class="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-lg">
+                    <div class="p-3 bg-slate-800/50 border-b border-slate-700"><h3 class="text-xs font-bold text-gray-400">خريطة العملات</h3></div>
+                    <div id="heatmap-container" class="h-[400px]"></div>
+                </div>
+            </div>
+
+            <!-- Calendar -->
             <div class="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-lg">
-                <div class="p-4 bg-slate-800/50 border-b border-slate-700">
-                    <h3 class="text-sm font-bold text-gray-300">خريطة قوة العملات</h3>
-                </div>
-                <div id="heatmap-container" class="h-[350px]"></div>
+                <div class="p-3 bg-slate-800/50 border-b border-slate-700"><h3 class="text-xs font-bold text-gray-400">التقويم الاقتصادي</h3></div>
+                <div id="calendar-container" class="h-[400px]"></div>
             </div>
-        </div>
-
-        <!-- Economic Calendar -->
-        <div class="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-lg mb-12">
-            <div class="p-4 bg-slate-800/50 border-b border-slate-700">
-                <h3 class="text-sm font-bold text-gray-300">التقويم الاقتصادي (High Impact)</h3>
-            </div>
-            <div id="calendar-container" class="h-[400px]"></div>
         </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 border-t border-slate-800 py-10 text-center">
-        <div class="flex items-center justify-center gap-6 mb-6">
-            <a href="https://t.me/fx_decode" target="_blank" class="social-icon telegram group">
-                <div class="icon-bg group-hover:border-blue-400 group-hover:text-blue-400">
-                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-                </div>
-            </a>
-            <a href="https://www.youtube.com/@FX.Decodee" target="_blank" class="social-icon youtube group">
-                <div class="icon-bg group-hover:border-red-500 group-hover:text-red-500">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
-                </div>
-            </a>
-            <a href="https://www.instagram.com/fx.decodee/" target="_blank" class="social-icon instagram group">
-                <div class="icon-bg group-hover:border-pink-500 group-hover:text-pink-500">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                </div>
-            </a>
-        </div>
-        <p class="text-[10px] text-gray-600">© 2025 FX DECOD System. All rights reserved.</p>
+    <footer class="bg-slate-900 border-t border-slate-800 py-8 mt-12 text-center text-xs text-gray-600">
+        <p>&copy; 2025 FX DECOD. All rights reserved.</p>
     </footer>
 
     <!-- Logic -->
-    <script type="module" src="./api.js"></script>
-    <script type="module" src="./app.js"></script>
+    <script type="module" src="app.js"></script>
 <script type="module" src="/index.tsx"></script>
 </body>
 </html>
