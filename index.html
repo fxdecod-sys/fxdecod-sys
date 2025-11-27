@@ -7,17 +7,8 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- TradingView Widgets -->
-    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-    </script>
-    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
-    </script>
-    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
-    </script>
-    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js" async>
-    </script>
-    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-    </script>
+    <!-- TradingView Script -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 </head>
 <body>
     <!-- الهيدر -->
@@ -38,9 +29,34 @@
         </div>
     </header>
 
-    <!-- شريط الأسعار المتحرك من TradingView -->
-    <div class="tradingview-widget-container">
-        <div class="tradingview-widget-container__widget"></div>
+    <!-- شريط الأسعار المتحرك -->
+    <div class="ticker-tape">
+        <div class="ticker-content">
+            <div class="ticker-item">
+                <span>الذهب:</span>
+                <span class="price-up">4,163.30 +0.52%</span>
+            </div>
+            <div class="ticker-item">
+                <span>EUR/USD:</span>
+                <span class="price-down">1.0850 -0.12%</span>
+            </div>
+            <div class="ticker-item">
+                <span>Bitcoin:</span>
+                <span class="price-up">67,420 +1.25%</span>
+            </div>
+            <div class="ticker-item">
+                <span>DXY:</span>
+                <span class="price-down">104.15 -0.08%</span>
+            </div>
+            <div class="ticker-item">
+                <span>S&P 500:</span>
+                <span class="price-up">6,817.8 +2.10</span>
+            </div>
+            <div class="ticker-item">
+                <span>US 100:</span>
+                <span class="price-up">25,255.9 +6.40</span>
+            </div>
+        </div>
     </div>
 
     <!-- المحتوى الرئيسي -->
@@ -124,17 +140,15 @@
                         <div class="chart-header">
                             <h3>Technical Analysis for XAUUSD</h3>
                             <div class="time-filters">
-                                <button class="time-btn active">1 minute</button>
-                                <button class="time-btn">5 minutes</button>
-                                <button class="time-btn">1 hour</button>
-                                <button class="time-btn">More</button>
+                                <button class="time-btn active" data-timeframe="1">1 minute</button>
+                                <button class="time-btn" data-timeframe="5">5 minutes</button>
+                                <button class="time-btn" data-timeframe="60">1 hour</button>
+                                <button class="time-btn" data-timeframe="D">More</button>
                             </div>
                         </div>
                         <div class="chart-container">
                             <!-- شارت TradingView -->
-                            <div class="tradingview-widget-container">
-                                <div id="tradingview_chart"></div>
-                            </div>
+                            <div id="tradingview_chart" style="height: 100%; width: 100%;"></div>
                         </div>
                     </div>
 
@@ -142,16 +156,12 @@
                     <div class="tools-grid">
                         <!-- التحليل الفني -->
                         <div class="tool-card">
-                            <div class="tradingview-widget-container">
-                                <div class="tradingview-widget-container__widget" id="technical-analysis"></div>
-                            </div>
+                            <div id="technical_analysis" style="height: 100%;"></div>
                         </div>
 
                         <!-- الخريطة الحرارية -->
                         <div class="tool-card">
-                            <div class="tradingview-widget-container">
-                                <div class="tradingview-widget-container__widget" id="forex-heat-map"></div>
-                            </div>
+                            <div id="forex_heatmap" style="height: 100%;"></div>
                         </div>
                     </div>
                 </div>
@@ -213,9 +223,7 @@
 
                     <!-- التقويم الاقتصادي -->
                     <div class="calendar-card">
-                        <div class="tradingview-widget-container">
-                            <div class="tradingview-widget-container__widget" id="economic-calendar"></div>
-                        </div>
+                        <div id="economic_calendar" style="height: 300px;"></div>
                     </div>
                 </div>
             </div>
@@ -263,8 +271,6 @@
         </div>
     </footer>
 
-    <!-- scripts -->
     <script src="script.js"></script>
-    <script src="tradingview-widgets.js"></script>
 </body>
 </html>
